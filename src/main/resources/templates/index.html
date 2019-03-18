@@ -16,17 +16,21 @@
 </head>
 <body>
 	<div class="container">
-	   <div class="row">
+	   <div class="alert alert-info" style="margin-top:10px">
+	   ・まず判定元の写真を撮影し、IDを入力し登録します。<br>
+	   ・判定を行う場合も、登録同様に行います。
+	   </div>
+	   <div class="row" style="margin-top:10px;">
 	       <video id="camera" width="300px" height="300px" autoplay style="margin:auto"></video>
            <canvas id="canvas" width="300px" height="300px" class="d-none" style="margin:auto"></canvas>
        </div>
-	   <div class="row" style="margin-top:10px">
+	   <div style="margin-top:10px">
                     <button type="button" class="btn btn-outline-success btn-lg btn-block" id="btnTakePicture">撮影</button>
                     <button type="button" class="btn btn-outline-warning btn-lg btn-block d-none" id="btnRetry">やり直す</button>
                 </div>
-                <div class="row" style="margin-top:10px">
+                <div style="margin-top:10px">
                     <div class="input-group">
-                      <input type="text" id="id" class="form-control" placeholder="半角英数のみ" aria-describedby="button-addon4">
+                      <input type="text" id="id" class="form-control" placeholder="ID（半角英数のみ）" aria-describedby="button-addon4">
                       <div class="input-group-append" id="button-addon4">
                         <button type="button" class="btn btn-outline-primary" id="btnRegist">登録</button>
                             <button type="button" class="btn btn-outline-primary" id="btnJudge">判定</button>
@@ -34,9 +38,7 @@
                     </div>
                 </div>
                 
-                <div class="row center-block" style="margin-top:10px">
-                    <div class="alert d-none" id="message"></div>
-                </div>
+                <div class="alert d-none" id="message" style="margin-top:10px"></div>
                 
     </div>
 		
@@ -101,12 +103,18 @@
     	});
     	
     	$('#btnRegist').click(function(){
+    		let id = $('#id').val();
+    		if(!id){
+    			alert('IDを入力してください。');
+    			return;
+    		}
+    		
     		var canvas = document.getElementById('canvas');
     	
     		canvas.toBlob(function(blob) {
     			let formData = new FormData();
     			formData.append('upload_file',blob);
-    			formData.append('id',$('#id').val());
+    			formData.append('id',id);
     			
 	    		$.ajax({
 	    		      url: '/api/faces/regist',
@@ -126,6 +134,13 @@
     	});
     	
     	$('#btnJudge').click(function(){
+    		
+    		let id = $('#id').val();
+            if(!id){
+                alert('IDを入力してください。');
+                return;
+            }
+            
     		$('#message').removeClass('alert-danger alert-success').addClass('d-none')
             var canvas = document.getElementById('canvas');
         
@@ -144,10 +159,11 @@
                         console.log( 'SUCCESS', res );
                       
                       if(res.faceMatches.length === 0){
-                    	  $('#message').addClass('alert-danger').removeClass('d-none').text('一致する画像がありません。');
+                    	  $('#message').addClass('alert-warning').removeClass('d-none').text('一致する画像がありません。');
+                      }else if(res.faceMatches[0].face.externalImageId !== id){
+                    	  $('#message').addClass('alert-danger').removeClass('d-none').text(`あなたは、「${id}」ではありません。`);
                       }else{
-                    	  let val = Math.floor(res.faceMatches[0].similarity);
-                    	  $('#message').addClass('alert-success').removeClass('d-none').text(`あなたは、「${res.faceMatches[0].face.externalImageId}」 ですね。`);
+                    	  $('#message').addClass('alert-success').removeClass('d-none').text(`あなたは、「${res.faceMatches[0].face.externalImageId}」本人 です。`);
                       }
                     }).fail(function( jqXHR, textStatus, errorThrown ) {
                       console.log( 'ERROR', jqXHR, textStatus, errorThrown );
