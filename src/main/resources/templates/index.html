@@ -1,46 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
 
-    <title>Hello, world!</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="form-inline">
-            <input type="text" class="form-control">
-            <button type="button" class="btn btn-primary">登録</button>
-            <button type="button" class="btn btn-primary">判定</button>
-          </div>
-          
-          <video id="camera" class="center-block" width="400" height="400" autoplay></video>
-        </div>
-        <div class="col-sm-6">
-          <canvas id="canvas"></canvas>
-        </div>
-      </div>
-      
-			<!-- 記録用canvas -->
-			<!-- <canvas id="canvas"></canvas> -->
-			<!-- 記録用img -->
-			<img id="img">
-			<!-- 撮影トリガー 1-->
-			<a id="rec" href="#">TAKE PICTURE</a>
-		</div>
+<title>Hello, world!</title>
+</head>
+<body>
+	<div class="container">
+	
+	   <div class="card center-block">
+	       <div class="card-header">写真比較</div>
+	       
+	       <video id="camera" class="center-block" width="300" height="300" autoplay></video>
+           <canvas id="canvas" width="300" height="300" class="center-block d-none"></canvas>
+           <div class="card-body">
+                <div class="row">
+	                <button type="button" class="btn btn-outline-success btn-lg btn-block" id="btnTakePicture">撮影</button>
+	                <button type="button" class="btn btn-outline-warning btn-lg btn-block d-none" id="btnRetry">やり直す</button>
+                </div>
+                <div class="row" style="margin-top:10px">
+                <div class="input-group">
+				  <input type="text" id="id" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username with two button addons" aria-describedby="button-addon4">
+				  <div class="input-group-append" id="button-addon4">
+				    <button type="button" class="btn btn-outline-primary" id="btnRegist">登録</button>
+                        <button type="button" class="btn btn-outline-primary" id="btnJudge">判定</button>
+				  </div>
+				</div>
+                </div>
+                
+                <div class="alert d-none" id="message"></div>
+           </div>
+	   </div>
+	   </div>
+		
+	</div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script>
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+		integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+		crossorigin="anonymous"></script>
+	<script>
     const setCamera = () => {
         const constraints = {
             audio: false,
@@ -62,17 +77,84 @@
     $(function(){
     	setCamera();
     	
-    	$('#rec').click(function () {
+    	$('#btnTakePicture').click(function () {
            // 撮影画像オブジェクトの生成
            var video = document.getElementById('camera');
            var canvas = document.getElementById('canvas');
            var canvasContext = canvas.getContext('2d');
            canvasContext.globalAlpha = 1.0;
-           canvasContext.drawImage(video, 0, 0, 200, 200);
-           var img = document.getElementById('img');
-           img.src = canvas.toDataURL('image/png');
-      });
+           console.log(`width:${canvas.width} height:${canvas.height}`)
+           canvasContext.drawImage(video, 0, 0,300,300);
+           
+           $('#camera').addClass('d-none');
+           $('#canvas').removeClass('d-none');
+           $('#btnTakePicture').addClass('d-none');
+           $('#btnRetry').removeClass('d-none');
+           
+        });
+    	
+    	$('#btnRetry').click(function () {
+    		$('#camera').removeClass('d-none');
+            $('#canvas').addClass('d-none');
+            $('#btnTakePicture').removeClass('d-none');
+            $('#btnRetry').addClass('d-none');
+    	});
+    	
+    	$('#btnRegist').click(function(){
+    		var canvas = document.getElementById('canvas');
+    	
+    		canvas.toBlob(function(blob) {
+    			let formData = new FormData();
+    			formData.append('upload_file',blob);
+    			formData.append('id',$('#id').val());
+    			
+	    		$.ajax({
+	    		      url: '/api/faces/regist',
+	    		      method: 'post',
+	    		      dataType: 'json',
+	    		      data: formData,
+	    		      processData: false,
+	    		      contentType: false
+	    		    }).done(function( res ) {
+	    		      // 送信せいこう！
+	    		      console.log( 'SUCCESS', res );
+	    		    }).fail(function( jqXHR, textStatus, errorThrown ) {
+	    		      // しっぱい！
+	    		      console.log( 'ERROR', jqXHR, textStatus, errorThrown );
+	    		    });
+	    	});
+    	});
+    	
+    	$('#btnJudge').click(function(){
+    		$('#message').removeClass('alert-danger alert-success').addClass('d-none')
+            var canvas = document.getElementById('canvas');
+        
+            canvas.toBlob(function(blob) {
+                let formData = new FormData();
+                formData.append('upload_file',blob);
+                
+                $.ajax({
+                      url: '/api/faces/judge',
+                      method: 'post',
+                      dataType: 'json',
+                      data: formData,
+                      processData: false,
+                      contentType: false
+                    }).done(function( res ) {
+                        console.log( 'SUCCESS', res );
+                      
+                      if(res.faceMatches.length === 0){
+                    	  $('#message').addClass('alert-danger').removeClass('d-none').text('一致する画像がありません。');
+                      }else{
+                    	  let val = Math.floor(res.faceMatches[0].similarity);
+                    	  $('#message').addClass('alert-success').removeClass('d-none').text(`あなたは、「${res.faceMatches[0].face.externalImageId}」 ですね。`);
+                      }
+                    }).fail(function( jqXHR, textStatus, errorThrown ) {
+                      console.log( 'ERROR', jqXHR, textStatus, errorThrown );
+                    });
+            });
+        });
     });
     </script>
-  </body>
+</body>
 </html>
