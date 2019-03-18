@@ -17,11 +17,11 @@
 <body>
 	<div class="container">
 	
-	   <div class="card center-block">
+	   <div class="card center-block" id="card">
 	       <div class="card-header">写真比較</div>
 	       
-	       <video id="camera" class="center-block" width="300" height="300" autoplay></video>
-           <canvas id="canvas" width="300" height="300" class="center-block d-none"></canvas>
+	       <video id="camera" width="100%" height="100%" autoplay></video>
+           <canvas id="canvas" class="d-none"></canvas>
            <div class="card-body">
                 <div class="row">
 	                <button type="button" class="btn btn-outline-success btn-lg btn-block" id="btnTakePicture">撮影</button>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="row" style="margin-top:10px">
                 <div class="input-group">
-				  <input type="text" id="id" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username with two button addons" aria-describedby="button-addon4">
+				  <input type="text" id="id" class="form-control" placeholder="半角英数のみ" aria-describedby="button-addon4">
 				  <div class="input-group-append" id="button-addon4">
 				    <button type="button" class="btn btn-outline-primary" id="btnRegist">登録</button>
                         <button type="button" class="btn btn-outline-primary" id="btnJudge">判定</button>
@@ -78,13 +78,18 @@
     	setCamera();
     	
     	$('#btnTakePicture').click(function () {
+    		
+    		   var container = document.getElementById('card');
            // 撮影画像オブジェクトの生成
            var video = document.getElementById('camera');
            var canvas = document.getElementById('canvas');
+           canvas.width = container.width;
+           canvas.height = container.height;
            var canvasContext = canvas.getContext('2d');
+           
            canvasContext.globalAlpha = 1.0;
            console.log(`width:${canvas.width} height:${canvas.height}`)
-           canvasContext.drawImage(video, 0, 0,300,300);
+           canvasContext.drawImage(video, 0, 0);
            
            $('#camera').addClass('d-none');
            $('#canvas').removeClass('d-none');
