@@ -17,8 +17,8 @@
 <body>
 	<div class="container">
 	   <div class="row">
-	       <video id="camera" width="200px" height="200px" autoplay></video>
-           <canvas id="canvas" width="200px" height="200px"></canvas>
+	       <video id="camera" width="300px" height="300px" autoplay style="margin:auto"></video>
+           <canvas id="canvas" width="300px" height="300px" class="d-none" style="margin:auto"></canvas>
        </div>
 	   <div class="row" style="margin-top:10px">
                     <button type="button" class="btn btn-outline-success btn-lg btn-block" id="btnTakePicture">撮影</button>
@@ -57,8 +57,8 @@
         const constraints = {
             audio: false,
             video: {
-            	width:400,
-            	height:400
+            	width:300,
+            	height:300
             }
         };
         navigator.mediaDevices.getUserMedia(constraints)
@@ -84,7 +84,7 @@
            var canvasContext = canvas.getContext('2d');
           
     
-           canvasContext.drawImage(video, 0,0,200,200);
+           canvasContext.drawImage(video, 0,0,300,300);
            
            $('#camera').addClass('d-none');
            $('#canvas').removeClass('d-none');
