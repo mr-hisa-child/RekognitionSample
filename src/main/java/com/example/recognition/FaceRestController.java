@@ -26,7 +26,7 @@ import com.amazonaws.services.rekognition.model.SearchFacesByImageResult;
 @RequestMapping(path = "/api/faces", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class FaceRestController {
 
-  private static final String COLLECTION_ID = "tsp";
+  private static final String COLLECTION_ID = System.getenv("COLLECTION_ID");
 
   @PostMapping("regist")
   public IndexFacesResult regist(@RequestParam("upload_file") MultipartFile multipartFile,
