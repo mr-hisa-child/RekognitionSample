@@ -26,59 +26,60 @@ import com.amazonaws.services.rekognition.model.SearchFacesByImageResult;
 @RequestMapping(path = "/api/faces", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class FaceRestController {
 
-  private static final String COLLECTION_ID = System.getenv("COLLECTION_ID");
+    private static final String COLLECTION_ID = System.getenv("COLLECTION_ID");
 
-  @PostMapping("regist")
-  public IndexFacesResult regist(@RequestParam("upload_file") MultipartFile multipartFile,
-      @RequestParam("id") String id) {
+    @PostMapping("regist")
+    public IndexFacesResult regist(@RequestParam("upload_file") MultipartFile multipartFile,
+            @RequestParam("id") String id) {
 
-    try {
+        try {
 
-      AmazonRekognition rekognitionClient = getRekognitionClient();
+            AmazonRekognition rekognitionClient = getRekognitionClient();
 
-      ListCollectionsResult listCollectionsResult = rekognitionClient.listCollections(new ListCollectionsRequest());
-      if (!listCollectionsResult.getCollectionIds().contains(COLLECTION_ID)) {
-        rekognitionClient.createCollection(new CreateCollectionRequest().withCollectionId(COLLECTION_ID));
-      }
+            ListCollectionsResult listCollectionsResult = rekognitionClient
+                    .listCollections(new ListCollectionsRequest());
+            if (!listCollectionsResult.getCollectionIds().contains(COLLECTION_ID)) {
+                rekognitionClient.createCollection(new CreateCollectionRequest().withCollectionId(COLLECTION_ID));
+            }
 
-      return rekognitionClient.indexFaces(
-          new IndexFacesRequest()
-              .withCollectionId(COLLECTION_ID)
-              .withExternalImageId(id)
-              .withImage(new Image().withBytes(ByteBuffer.wrap(multipartFile.getBytes()))));
+            return rekognitionClient.indexFaces(
+                    new IndexFacesRequest()
+                            .withCollectionId(COLLECTION_ID)
+                            .withExternalImageId(id)
+                            .withImage(new Image().withBytes(ByteBuffer.wrap(multipartFile.getBytes()))));
 
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
-  }
 
-  @PostMapping("judge")
-  public SearchFacesByImageResult diff(@RequestParam("upload_file") MultipartFile multipartFile) {
+    @PostMapping("judge")
+    public SearchFacesByImageResult diff(@RequestParam("upload_file") MultipartFile multipartFile) {
 
-    try {
+        try {
 
-      AmazonRekognition rekognitionClient = getRekognitionClient();
+            AmazonRekognition rekognitionClient = getRekognitionClient();
 
-      SearchFacesByImageRequest searchFacesByImageRequest = new SearchFacesByImageRequest()
-          .withCollectionId(COLLECTION_ID)
-          .withImage(new Image().withBytes(ByteBuffer.wrap(multipartFile.getBytes())))
-          .withFaceMatchThreshold(90F)
-          .withMaxFaces(1);
+            SearchFacesByImageRequest searchFacesByImageRequest = new SearchFacesByImageRequest()
+                    .withCollectionId(COLLECTION_ID)
+                    .withImage(new Image().withBytes(ByteBuffer.wrap(multipartFile.getBytes())))
+                    .withFaceMatchThreshold(99.9F)
+                    .withMaxFaces(1);
 
-      return rekognitionClient
-          .searchFacesByImage(searchFacesByImageRequest);
-    } catch (InvalidParameterException e) {
-      return new SearchFacesByImageResult();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+            return rekognitionClient
+                    .searchFacesByImage(searchFacesByImageRequest);
+        } catch (InvalidParameterException e) {
+            return new SearchFacesByImageResult();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
-  }
 
-  private AmazonRekognition getRekognitionClient() {
-    return AmazonRekognitionClientBuilder.standard()
-        .withRegion("ap-northeast-1")
-        .withCredentials(new EnvironmentVariableCredentialsProvider())
-        .build();
-  }
+    private AmazonRekognition getRekognitionClient() {
+        return AmazonRekognitionClientBuilder.standard()
+                .withRegion("ap-northeast-1")
+                .withCredentials(new EnvironmentVariableCredentialsProvider())
+                .build();
+    }
 
 }
